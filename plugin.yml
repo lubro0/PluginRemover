@@ -1,7 +1,7 @@
 name: PluginRemover
 version: 1.4
 main: zin\PluginRemover\Main
-api: 5.20.1
+api: 5.0.0
 src-namespace-prefix: zin\PluginRemover
 commands:
   plremove:

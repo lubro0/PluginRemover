@@ -18,7 +18,8 @@ class Main extends PluginBase{
             }
 
             if (count($args) < 2) {
-                return false;
+                $sender->sendMessage("§cUsage: /plremove <Plugin Name> <Mode: normal/total>");
+                return true;
             }
 
             $pluginName = $args[0];
@@ -35,29 +36,40 @@ class Main extends PluginBase{
                 return true;
             }
 
+            $pluginPath = $this->getServer()->getDataPath() . "plugins/" . $pluginName;
             if ($mode === "normal") {
                 $this->getServer()->getPluginManager()->disablePlugin($plugin);
                 $sender->sendMessage("§aPlugin {$pluginName} has been removed.");
-                $pluginPath = $this->getServer()->getDataPath() . "plugins/" . $pluginName . ".phar";
-                if (file_exists($pluginPath)) {
-                    unlink($pluginPath);
+                if (is_file($pluginPath . ".phar")) {
+                    unlink($pluginPath . ".phar");
+                } elseif (is_dir($pluginPath)) {
+                    $this->deleteDirectory($pluginPath);
                 }
             } elseif ($mode === "total") {
                 $this->getServer()->getPluginManager()->disablePlugin($plugin);
                 $sender->sendMessage("§aPlugin {$pluginName} and its data have been removed.");
-                $pluginPath = $this->getServer()->getDataPath() . "plugins/" . $pluginName . ".phar";
-                if (file_exists($pluginPath)) {
-                    unlink($pluginPath);
+                if (is_file($pluginPath . ".phar")) {
+                    unlink($pluginPath . ".phar");
+                } elseif (is_dir($pluginPath)) {
+                    $this->deleteDirectory($pluginPath);
                 }
                 $pluginDataPath = $this->getServer()->getDataPath() . "plugin_data/" . $pluginName;
                 if (is_dir($pluginDataPath)) {
-                    array_map('unlink', glob("$pluginDataPath/*.*"));
-                    rmdir($pluginDataPath);
+                    $this->deleteDirectory($pluginDataPath);
                 }
             }
             return true;
         }
 
         return false;
+    }
+
+    private function deleteDirectory(string $dirPath): void {
+        foreach (scandir($dirPath) as $item) {
+            if ($item === '.' || $item === '..') continue;
+            $path = $dirPath . DIRECTORY_SEPARATOR . $item;
+            is_dir($path) ? $this->deleteDirectory($path) : unlink($path);
+        }
+        rmdir($dirPath);
     }
 }

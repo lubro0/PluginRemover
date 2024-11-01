@@ -32,17 +32,23 @@ class Main extends PluginBase{
 
             if ($mode === "normal") {
                 $this->getServer()->getPluginManager()->disablePlugin($plugin);
-                $this->getServer()->getPluginManager()->unloadPlugin($plugin);
                 $sender->sendMessage("§aPlugin {$pluginName} has been removed.");
+                $pluginPath = $this->getServer()->getDataPath() . "plugins/" . $pluginName . ".phar";
+                if (file_exists($pluginPath)) {
+                    unlink($pluginPath);
+                }
             } elseif ($mode === "total") {
                 $this->getServer()->getPluginManager()->disablePlugin($plugin);
-                $this->getServer()->getPluginManager()->unloadPlugin($plugin);
-                $pluginDataPath = $this->getServer()->getDataPath() . "plugins/" . $pluginName;
+                $sender->sendMessage("§aPlugin {$pluginName} and its data have been removed.");
+                $pluginPath = $this->getServer()->getDataPath() . "plugins/" . $pluginName . ".phar";
+                if (file_exists($pluginPath)) {
+                    unlink($pluginPath);
+                }
+                $pluginDataPath = $this->getServer()->getDataPath() . "plugin_data/" . $pluginName;
                 if (is_dir($pluginDataPath)) {
                     array_map('unlink', glob("$pluginDataPath/*.*"));
                     rmdir($pluginDataPath);
                 }
-                $sender->sendMessage("§aPlugin {$pluginName} and its data have been removed.");
             }
             return true;
         }

@@ -26,7 +26,7 @@ class Main extends PluginBase{
             }
 
             if (!in_array($mode, ["normal", "total"], true)) {
-                $sender->sendMessage("§cMode not found.");
+                $sender->sendMessage("§cMode not found. Available modes: normal, total.");
                 return true;
             }
 

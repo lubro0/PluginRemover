@@ -12,6 +12,11 @@ class Main extends PluginBase{
 
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if ($command->getName() === "plremove") {
+            if (!$sender->hasPermission("pl.remove")) {
+                $sender->sendMessage("§cYou do not have permission to use this command.");
+                return true;
+            }
+
             if (count($args) < 2) {
                 return false;
             }
